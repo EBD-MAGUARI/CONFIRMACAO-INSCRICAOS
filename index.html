@@ -519,7 +519,7 @@
 <script>
   // ── Configuração ──────────────────────────────────────────────────────────
   // Cole aqui a URL do seu Google Apps Script publicado como Web App
-  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyFRrZ9OWl5xkrKh6pLMK8-TpBcIKWqahcGD3_4rA0qbEYrs4zb4wvHsQZO_jW_duLwgA/exec";
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzYWgUNxvaGvhJJn7_FHdbWeleE5qcyMjY9QxIkcBgTSZ7-Zon6ot1PSJK9sO2SY1Cdiw/exec";
 
   // Número de WhatsApp que receberá o comprovante (com DDI 55 + DDD + número)
   const WHATSAPP_DESTINO = "5591980208294";
@@ -566,11 +566,27 @@
     try {
       const resp = await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify({ acao: 'buscarInscricao', tipoBusca, termoBusca })
       });
 
-      const dados = await resp.json();
+      if (!resp.ok) {
+        mostrarFeedback('erro', `O servidor respondeu com erro (status ${resp.status}). Verifique se o Apps Script foi publicado corretamente.`);
+        console.error('HTTP status:', resp.status, await resp.text());
+        return;
+      }
+
+      const textoResp = await resp.text();
+
+      let dados;
+      try {
+        dados = JSON.parse(textoResp);
+      } catch (parseErr) {
+        mostrarFeedback('erro', 'O servidor não devolveu dados no formato esperado. Veja o console (F12) para detalhes.');
+        console.error('Resposta recebida (não é JSON válido):', textoResp);
+        return;
+      }
+
       ocultarFeedback();
 
       if (!dados.ok || !dados.inscricao) {
@@ -581,8 +597,8 @@
       preencherComprovante(dados.inscricao);
 
     } catch (err) {
-      mostrarFeedback('erro', 'Erro de conexão. Verifique sua internet e tente novamente.');
-      console.error(err);
+      mostrarFeedback('erro', 'Não foi possível conectar ao servidor. Pode ser bloqueio de CORS ou a URL do Apps Script estar incorreta/desatualizada.');
+      console.error('Erro de fetch:', err);
     }
   }
 
@@ -613,25 +629,23 @@
   }
 
   function compartilharWhatsApp() {
+    // 1. Captura os dados diretamente dos elementos da tela que já foram preenchidos
     const nome = document.getElementById('d-nome').textContent;
-    const pedido = document.getElementById('d-pedido').textContent;
-    const area = document.getElementById('d-area').textContent;
+    const telefone = document.getElementById('d-telefone').textContent;
     const congregacao = document.getElementById('d-congregacao').textContent;
     const grupo = document.getElementById('d-grupo').textContent;
+    const area = document.getElementById('d-area').textContent;
+    const pedido = document.getElementById('d-pedido').textContent;
 
-    const texto = encodeURIComponent(
-      `📚 * CONFERÊNCIA DA EBD\nCONFIRMAÇÃO DE INSCRIÇÃO\n\nInformamos que o pagamento referente à sua inscrição foi confirmado com sucesso.\nOs dados abaixo foram registrados em nosso sistema:*\n\n` +
-      `👤 *Participante:* ${nome}\n` +
-      `⛪ *Congregação:* ${congregacao}\n` +
-      `👥 *${grupo}*\n` +
-      `📍 *Área:* ${area}\n` +
-      `🆔 *Pedido:* ${pedido}\n\n` +
-      `Sua participação na Conferência da EBD está oficialmente confirmada.\n\nSolicitamos que esta confirmação seja mantida para apresentação no credenciamento do evento.\n\nAtenciosamente,\nSecretaria da EBD`;`
-    );
-    // Envia direto para o número configurado em WHATSAPP_DESTINO
-    window.open('https://wa.me/' + WHATSAPP_DESTINO + '?text=' + texto, '_blank');
+    // 2. Monta o texto da mensagem usando as variáveis corretas
+    const texto = `📚 *CONFERÊNCIA DA EBD*\n*CONFIRMAÇÃO DE INSCRIÇÃO*\n\nInformamos que o pagamento referente à sua inscrição foi confirmado com sucesso.\n\n*Dados registrados:*\n👤 *Participante:* ${nome}\n📞 *Telefone:* ${telefone}\n⛪ *Congregação:* ${congregacao}\n👥 *Grupo:* ${grupo}\n📍 *Área:* ${area}\n🆔 *Número do Pedido:* ${pedido}\n\nSua participação na Conferência da EBD está oficialmente confirmada.\n\nApresente esta confirmação no credenciamento do evento.\n\n*Atenciosamente,*\n*Secretaria da EBD*`;
+
+    // 3. Usa a constante WHATSAPP_DESTINO que você já definiu no topo do script
+    const urlZap = `https://api.whatsapp.com/send?phone=${WHATSAPP_DESTINO}&text=${encodeURIComponent(texto)}`;
+    
+    // 4. Abre o WhatsApp em uma nova aba
+    window.open(urlZap, '_blank');
   }
-
   // Permitir Enter nos inputs
   ['inp-nome','inp-telefone','inp-pedido'].forEach(id => {
     document.getElementById(id).addEventListener('keydown', e => {
