@@ -1,5 +1,635 @@
-function compartilharWhatsApp() {
-    // 1. Captura os dados diretamente dos elementos da tela que já foram preenchidos
+Aqui está o código HTML completo, corrigido e pronto para uso. A função do WhatsApp foi totalmente ajustada para utilizar as variáveis corretas da tela e o número de destino definido na constante `WHATSAPP_DESTINO`.
+
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comprovante de Inscrição — Conferência EBD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --azul: #1A3A6B;
+    --azul-claro: #2B5BA8;
+    --dourado: #C8991A;
+    --dourado-claro: #F0C040;
+    --bg: #F5F3EE;
+    --branco: #FFFFFF;
+    --texto: #1C1C1C;
+    --texto-muted: #5A5A5A;
+    --borda: #DEDAD2;
+    --verde: #1A6B3A;
+    --verde-bg: #EAF5EF;
+    --vermelho: #9B1A1A;
+    --vermelho-bg: #FAEAEA;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--texto);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem 4rem;
+  }
+
+  /* ── Cabeçalho ── */
+  .header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+  .header-badge {
+    display: inline-block;
+    background: var(--azul);
+    color: var(--dourado-claro);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 18px;
+    border-radius: 40px;
+    margin-bottom: 1rem;
+  }
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    color: var(--azul);
+    line-height: 1.2;
+    margin-bottom: 0.4rem;
+  }
+  .header p {
+    font-size: 14px;
+    color: var(--texto-muted);
+  }
+
+  /* ── Card busca ── */
+  .card {
+    background: var(--branco);
+    border: 1px solid var(--borda);
+    border-radius: 16px;
+    padding: 2rem 2rem;
+    width: 100%;
+    max-width: 540px;
+    margin-bottom: 1.5rem;
+  }
+
+  .card-title {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--texto-muted);
+    margin-bottom: 1.2rem;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--borda);
+    padding-bottom: 0;
+  }
+  .tab {
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 16px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: var(--texto-muted);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color .2s, border-color .2s;
+  }
+  .tab.active {
+    color: var(--azul);
+    border-bottom-color: var(--azul);
+  }
+
+  .search-panel { display: none; }
+  .search-panel.active { display: block; }
+
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--texto-muted);
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    margin-bottom: 6px;
+  }
+
+  input[type="text"], input[type="tel"] {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid var(--borda);
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    color: var(--texto);
+    background: var(--bg);
+    outline: none;
+    transition: border-color .2s;
+    margin-bottom: 1rem;
+  }
+  input:focus { border-color: var(--azul-claro); background: #fff; }
+
+  .btn-buscar {
+    width: 100%;
+    padding: 13px;
+    background: var(--azul);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s, transform .1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-buscar:hover { background: var(--azul-claro); }
+  .btn-buscar:active { transform: scale(0.98); }
+  .btn-buscar svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+  /* ── Feedback ── */
+  .feedback {
+    display: none;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    margin-top: 1rem;
+    align-items: center;
+    gap: 10px;
+  }
+  .feedback.erro { background: var(--vermelho-bg); color: var(--vermelho); display: flex; }
+  .feedback.loading { background: #EEF2F9; color: var(--azul); display: flex; }
+
+  /* ── Spinner ── */
+  .spinner {
+    width: 18px; height: 18px;
+    border: 2px solid #B0C4E8;
+    border-top-color: var(--azul);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Comprovante ── */
+  #comprovante-wrapper { width: 100%; max-width: 540px; display: none; }
+
+  .comprovante {
+    background: var(--branco);
+    border: 1px solid var(--borda);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+
+  .comp-header {
+    background: var(--azul);
+    padding: 1.6rem 2rem;
+    text-align: center;
+    position: relative;
+  }
+  .comp-header::after {
+    content: '';
+    display: block;
+    height: 3px;
+    background: linear-gradient(90deg, var(--dourado), var(--dourado-claro), var(--dourado));
+    margin-top: 1rem;
+  }
+  .comp-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    color: var(--dourado-claro);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .comp-titulo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: #fff;
+    line-height: 1.3;
+  }
+  .comp-subtitulo {
+    font-size: 12px;
+    color: rgba(255,255,255,0.65);
+    margin-top: 4px;
+  }
+
+  .comp-status {
+    background: var(--verde-bg);
+    border-bottom: 1px solid #C3E0CC;
+    padding: 14px 2rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .status-icon {
+    width: 32px; height: 32px;
+    background: var(--verde);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .status-icon svg { width: 16px; height: 16px; stroke: #fff; }
+  .status-text { font-size: 13px; color: var(--verde); font-weight: 600; }
+  .status-sub { font-size: 12px; color: #2E7D52; }
+
+  .comp-body { padding: 1.5rem 2rem; }
+
+  .comp-body p.intro {
+    font-size: 13px;
+    color: var(--texto-muted);
+    margin-bottom: 1.2rem;
+    line-height: 1.6;
+    border-left: 3px solid var(--dourado);
+    padding-left: 12px;
+  }
+
+  .dados-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--borda);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+  .dado-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--borda);
+  }
+  .dado-row:last-child { border-bottom: none; }
+  .dado-row:nth-child(even) { background: #FAFAF8; }
+  .dado-icon { font-size: 18px; flex-shrink: 0; width: 24px; text-align: center; }
+  .dado-label { font-size: 11px; color: var(--texto-muted); font-weight: 600; text-transform: uppercase; letter-spacing: .6px; }
+  .dado-valor { font-size: 14px; color: var(--texto); font-weight: 500; }
+
+  .comp-id {
+    background: #F0F4FB;
+    border: 1px dashed #B0C4E8;
+    border-radius: 8px;
+    padding: 12px 16px;
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  .comp-id small { font-size: 11px; color: var(--azul-claro); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+  .comp-id strong { display: block; font-size: 15px; color: var(--azul); font-family: monospace; margin-top: 2px; letter-spacing: 1px; }
+
+  .comp-footer-text {
+    font-size: 12px;
+    color: var(--texto-muted);
+    text-align: center;
+    line-height: 1.7;
+    border-top: 1px solid var(--borda);
+    padding-top: 1.2rem;
+  }
+  .comp-footer-text strong { color: var(--azul); }
+
+  .comp-rodape {
+    background: var(--azul);
+    padding: 12px 2rem;
+    text-align: center;
+    font-size: 11px;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: .5px;
+  }
+
+  /* ── Ações ── */
+  .acoes {
+    display: flex;
+    gap: 10px;
+  }
+  .btn-acao {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--borda);
+    background: var(--branco);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    transition: background .15s, transform .1s;
+    color: var(--texto);
+  }
+  .btn-acao:hover { background: var(--bg); }
+  .btn-acao:active { transform: scale(0.97); }
+  .btn-acao.primario { background: var(--azul); color: #fff; border-color: var(--azul); }
+  .btn-acao.primario:hover { background: var(--azul-claro); }
+  .btn-acao.whatsapp { background: #1FAA59; color: #fff; border-color: #1FAA59; }
+  .btn-acao.whatsapp:hover { background: #18954c; }
+  .btn-acao svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+  /* ── Nova busca ── */
+  .btn-nova {
+    display: block;
+    text-align: center;
+    font-size: 13px;
+    color: var(--azul-claro);
+    cursor: pointer;
+    margin-top: .5rem;
+    text-decoration: underline;
+    background: none;
+    border: none;
+    width: 100%;
+  }
+
+  /* ── Print ── */
+  @media print {
+    body { background: #fff; padding: 0; }
+    .card, .acoes, .btn-nova, .header { display: none !important; }
+    #comprovante-wrapper { display: block !important; max-width: 100%; }
+    .comprovante { border: none; border-radius: 0; }
+    .comp-rodape { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .comp-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+
+  @media (max-width: 480px) {
+    .card, #comprovante-wrapper { padding: 0; }
+    .card { padding: 1.5rem 1.2rem; }
+    .comp-body { padding: 1.2rem 1.2rem; }
+    .comp-header { padding: 1.2rem; }
+    .acoes { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge">EBD AD Maguari</div>
+  <h1>Conferência da EBD</h1>
+  <p>Consulta e emissão de comprovante de inscrição</p>
+</div>
+
+<div class="card" id="card-busca">
+  <div class="card-title">Buscar inscrição</div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="trocarTab('nome')">Por nome</button>
+    <button class="tab" onclick="trocarTab('telefone')">Por telefone</button>
+    <button class="tab" onclick="trocarTab('pedido')">Por nº do pedido</button>
+  </div>
+
+  <div id="panel-nome" class="search-panel active">
+    <label for="inp-nome">Nome completo</label>
+    <input type="text" id="inp-nome" placeholder="Ex: Judite Ferreira Moura" autocomplete="off">
+  </div>
+
+  <div id="panel-telefone" class="search-panel">
+    <label for="inp-telefone">Telefone</label>
+    <input type="tel" id="inp-telefone" placeholder="Ex: (91) 99234-6353" autocomplete="off">
+  </div>
+
+  <div id="panel-pedido" class="search-panel">
+    <label for="inp-pedido">Número do pedido</label>
+    <input type="text" id="inp-pedido" placeholder="Ex: EBD-1781732110398" autocomplete="off">
+  </div>
+
+  <button class="btn-buscar" onclick="buscarInscricao()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    Buscar inscrição
+  </button>
+
+  <div class="feedback" id="feedback"></div>
+</div>
+
+<div id="comprovante-wrapper">
+  <div class="comprovante" id="comprovante">
+    <div class="comp-header">
+      <div class="comp-logo">EBD · AD Maguari</div>
+      <div class="comp-titulo">📚 Conferência da EBD</div>
+      <div class="comp-subtitulo">Documento Oficial de Inscrição</div>
+    </div>
+
+    <div class="comp-status">
+      <div class="status-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <div>
+        <div class="status-text">Inscrição confirmada</div>
+        <div class="status-sub">Pagamento registrado com sucesso</div>
+      </div>
+    </div>
+
+    <div class="comp-body">
+      <p class="intro">
+        Informamos que o pagamento referente à sua inscrição foi confirmado com sucesso.
+        Os dados abaixo foram registrados em nosso sistema.
+      </p>
+
+      <div class="dados-grid">
+        <div class="dado-row">
+          <span class="dado-icon">👤</span>
+          <div>
+            <div class="dado-label">Participante</div>
+            <div class="dado-valor" id="d-nome">—</div>
+          </div>
+        </div>
+        <div class="dado-row">
+          <span class="dado-icon">📞</span>
+          <div>
+            <div class="dado-label">Telefone</div>
+            <div class="dado-valor" id="d-telefone">—</div>
+          </div>
+        </div>
+        <div class="dado-row">
+          <span class="dado-icon">⛪</span>
+          <div>
+            <div class="dado-label">Congregação</div>
+            <div class="dado-valor" id="d-congregacao">—</div>
+          </div>
+        </div>
+        <div class="dado-row">
+          <span class="dado-icon">👥</span>
+          <div>
+            <div class="dado-label">Grupo</div>
+            <div class="dado-valor" id="d-grupo">—</div>
+          </div>
+        </div>
+        <div class="dado-row">
+          <span class="dado-icon">📍</span>
+          <div>
+            <div class="dado-label">Área</div>
+            <div class="dado-valor" id="d-area">—</div>
+          </div>
+        </div>
+        <div class="dado-row">
+          <span class="dado-icon">📅</span>
+          <div>
+            <div class="dado-label">Data de inscrição</div>
+            <div class="dado-valor" id="d-data">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="comp-id">
+        <small>Número do pedido</small>
+        <strong id="d-pedido">—</strong>
+      </div>
+
+      <div class="comp-footer-text">
+        Sua participação na Conferência da EBD está <strong>oficialmente confirmada</strong>.<br>
+        Apresente este comprovante no credenciamento do evento.<br><br>
+        <strong>Atenciosamente, Secretaria da EBD</strong>
+      </div>
+    </div>
+
+    <div class="comp-rodape">
+      EBD AD Maguari · Emitido em <span id="d-emissao">—</span>
+    </div>
+  </div>
+
+  <div class="acoes">
+    <button class="btn-acao" onclick="window.print()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>
+      </svg>
+      Imprimir
+    </button>
+    <button class="btn-acao whatsapp" onclick="compartilharWhatsApp()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.64 3.27 2 2 0 0 1 3.62 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6 6l.94-.94a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16z"/>
+      </svg>
+      Enviar para o WhatsApp
+    </button>
+  </div>
+  <button class="btn-nova" onclick="novaBusca()">← Fazer nova busca</button>
+</div>
+
+<script>
+  // ── Configuração ──────────────────────────────────────────────────────────
+  // Cole aqui a URL do seu Google Apps Script publicado como Web App
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzYWgUNxvaGvhJJn7_FHdbWeleE5qcyMjY9QxIkcBgTSZ7-Zon6ot1PSJK9sO2SY1Cdiw/exec";
+
+  // Número de WhatsApp que receberá o comprovante (com DDI 55 + DDD + número)
+  const WHATSAPP_DESTINO = "5591980208294";
+
+  let tabAtual = "nome";
+
+  function trocarTab(tab) {
+    tabAtual = tab;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.search-panel').forEach(p => p.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById('panel-' + tab).classList.add('active');
+    ocultarFeedback();
+  }
+
+  function mostrarFeedback(tipo, msg) {
+    const el = document.getElementById('feedback');
+    el.className = 'feedback ' + tipo;
+    el.innerHTML = tipo === 'loading'
+      ? `<div class="spinner"></div><span>${msg}</span>`
+      : `<span>⚠️ ${msg}</span>`;
+  }
+  function ocultarFeedback() {
+    document.getElementById('feedback').className = 'feedback';
+  }
+
+  async function buscarInscricao() {
+    ocultarFeedback();
+
+    let termoBusca = '';
+    let tipoBusca = tabAtual;
+
+    if (tabAtual === 'nome') termoBusca = document.getElementById('inp-nome').value.trim();
+    else if (tabAtual === 'telefone') termoBusca = document.getElementById('inp-telefone').value.trim();
+    else termoBusca = document.getElementById('inp-pedido').value.trim();
+
+    if (!termoBusca) {
+      mostrarFeedback('erro', 'Preencha o campo antes de buscar.');
+      return;
+    }
+
+    mostrarFeedback('loading', 'Consultando base de dados...');
+
+    try {
+      const resp = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ acao: 'buscarInscricao', tipoBusca, termoBusca })
+      });
+
+      if (!resp.ok) {
+        mostrarFeedback('erro', `O servidor respondeu com erro (status ${resp.status}). Verifique se o Apps Script foi publicado corretamente.`);
+        console.error('HTTP status:', resp.status, await resp.text());
+        return;
+      }
+
+      const textoResp = await resp.text();
+
+      let dados;
+      try {
+        dados = JSON.parse(textoResp);
+      } catch (parseErr) {
+        mostrarFeedback('erro', 'O servidor não devolveu dados no formato esperado. Veja o console (F12) para detalhes.');
+        console.error('Resposta recebida (não é JSON válido):', textoResp);
+        return;
+      }
+
+      ocultarFeedback();
+
+      if (!dados.ok || !dados.inscricao) {
+        mostrarFeedback('erro', dados.mensagem || 'Inscrição não encontrada. Verifique os dados e tente novamente.');
+        return;
+      }
+
+      preencherComprovante(dados.inscricao);
+
+    } catch (err) {
+      mostrarFeedback('erro', 'Não foi possível conectar ao servidor. Pode ser bloqueio de CORS ou a URL do Apps Script estar incorreta/desatualizada.');
+      console.error('Erro de fetch:', err);
+    }
+  }
+
+  function preencherComprovante(ins) {
+    document.getElementById('d-nome').textContent = ins.nome || '—';
+    document.getElementById('d-telefone').textContent = ins.telefone || '—';
+    document.getElementById('d-congregacao').textContent = ins.congregacao || '—';
+    document.getElementById('d-grupo').textContent = ins.grupo ? 'Grupo ' + ins.grupo : '—';
+    document.getElementById('d-area').textContent = ins.area || '—';
+    document.getElementById('d-data').textContent = ins.data || '—';
+    document.getElementById('d-pedido').textContent = ins.orderId || '—';
+
+    const agora = new Date();
+    document.getElementById('d-emissao').textContent =
+      agora.toLocaleDateString('pt-BR') + ' às ' + agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+    document.getElementById('card-busca').style.display = 'none';
+    document.getElementById('comprovante-wrapper').style.display = 'block';
+  }
+
+  function novaBusca() {
+    document.getElementById('card-busca').style.display = 'block';
+    document.getElementById('comprovante-wrapper').style.display = 'none';
+    document.getElementById('inp-nome').value = '';
+    document.getElementById('inp-telefone').value = '';
+    document.getElementById('inp-pedido').value = '';
+    ocultarFeedback();
+  }
+
+  function compartilharWhatsApp() {
     const nome = document.getElementById('d-nome').textContent;
     const telefone = document.getElementById('d-telefone').textContent;
     const congregacao = document.getElementById('d-congregacao').textContent;
@@ -7,12 +637,20 @@ function compartilharWhatsApp() {
     const area = document.getElementById('d-area').textContent;
     const pedido = document.getElementById('d-pedido').textContent;
 
-    // 2. Monta o texto da mensagem usando as variáveis corretas
     const texto = `📚 *CONFERÊNCIA DA EBD*\n*CONFIRMAÇÃO DE INSCRIÇÃO*\n\nInformamos que o pagamento referente à sua inscrição foi confirmado com sucesso.\n\n*Dados registrados:*\n👤 *Participante:* ${nome}\n📞 *Telefone:* ${telefone}\n⛪ *Congregação:* ${congregacao}\n👥 *Grupo:* ${grupo}\n📍 *Área:* ${area}\n🆔 *Número do Pedido:* ${pedido}\n\nSua participação na Conferência da EBD está oficialmente confirmada.\n\nApresente esta confirmação no credenciamento do evento.\n\n*Atenciosamente,*\n*Secretaria da EBD*`;
 
-    // 3. Usa a constante WHATSAPP_DESTINO que você já definiu no topo do script
     const urlZap = `https://api.whatsapp.com/send?phone=${WHATSAPP_DESTINO}&text=${encodeURIComponent(texto)}`;
-    
-    // 4. Abre o WhatsApp em uma nova aba
     window.open(urlZap, '_blank');
   }
+
+  // Permitir Enter nos inputs
+  ['inp-nome','inp-telefone','inp-pedido'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', e => {
+      if (e.key === 'Enter') buscarInscricao();
+    });
+  });
+</script>
+</body>
+</html>
+
+```
