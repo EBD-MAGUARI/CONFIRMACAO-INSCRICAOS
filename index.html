@@ -519,7 +519,7 @@
 <script>
   // ── Configuração ──────────────────────────────────────────────────────────
   // Cole aqui a URL do seu Google Apps Script publicado como Web App
-  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzYWgUNxvaGvhJJn7_FHdbWeleE5qcyMjY9QxIkcBgTSZ7-Zon6ot1PSJK9sO2SY1Cdiw/exec";
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyFRrZ9OWl5xkrKh6pLMK8-TpBcIKWqahcGD3_4rA0qbEYrs4zb4wvHsQZO_jW_duLwgA/exec";
 
   // Número de WhatsApp que receberá o comprovante (com DDI 55 + DDD + número)
   const WHATSAPP_DESTINO = "5591980208294";
@@ -566,27 +566,11 @@
     try {
       const resp = await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ acao: 'buscarInscricao', tipoBusca, termoBusca })
       });
 
-      if (!resp.ok) {
-        mostrarFeedback('erro', `O servidor respondeu com erro (status ${resp.status}). Verifique se o Apps Script foi publicado corretamente.`);
-        console.error('HTTP status:', resp.status, await resp.text());
-        return;
-      }
-
-      const textoResp = await resp.text();
-
-      let dados;
-      try {
-        dados = JSON.parse(textoResp);
-      } catch (parseErr) {
-        mostrarFeedback('erro', 'O servidor não devolveu dados no formato esperado. Veja o console (F12) para detalhes.');
-        console.error('Resposta recebida (não é JSON válido):', textoResp);
-        return;
-      }
-
+      const dados = await resp.json();
       ocultarFeedback();
 
       if (!dados.ok || !dados.inscricao) {
@@ -597,8 +581,8 @@
       preencherComprovante(dados.inscricao);
 
     } catch (err) {
-      mostrarFeedback('erro', 'Não foi possível conectar ao servidor. Pode ser bloqueio de CORS ou a URL do Apps Script estar incorreta/desatualizada.');
-      console.error('Erro de fetch:', err);
+      mostrarFeedback('erro', 'Erro de conexão. Verifique sua internet e tente novamente.');
+      console.error(err);
     }
   }
 
@@ -635,14 +619,18 @@
     const congregacao = document.getElementById('d-congregacao').textContent;
     const grupo = document.getElementById('d-grupo').textContent;
 
-    const d = participant;
-  const texto = `📚 CONFERÊNCIA DA EBD\nCONFIRMAÇÃO DE INSCRIÇÃO\n\nInformamos que o pagamento referente à sua inscrição foi confirmado com sucesso.\nOs dados abaixo foram registrados em nosso sistema:\n\n👤 Participante: ${d.nome}\n📞 Telefone: ${d.telefone}\n⛪ Congregação: ${d.congregacao}\n👥 Grupo: ${d.grupo}\n📍 Área: ${d.area}\n🆔 Número do Pedido: ${d.orderId}\n\nSua participação na Conferência da EBD está oficialmente confirmada.\n\nSolicitamos que esta confirmação seja mantida para apresentação no credenciamento do evento.\n\nAtenciosamente,\nSecretaria da EBD`;
-  document.getElementById("zapBtn").href = `https://wa.me/${CFG.numeroZap}?text=${encodeURIComponent(texto)}`;
-  document.getElementById("orderTag").textContent = `ID: ${d.orderId}`;
-  document.getElementById("telaForm").style.display = "none";
-  document.getElementById("telaOk").style.display   = "block";
-  window.scrollTo({top:0, behavior:"smooth"});
-}
+    const texto = encodeURIComponent(
+      `📚 * CONFERÊNCIA DA EBD\nCONFIRMAÇÃO DE INSCRIÇÃO\n\nInformamos que o pagamento referente à sua inscrição foi confirmado com sucesso.\nOs dados abaixo foram registrados em nosso sistema:*\n\n` +
+      `👤 *Participante:* ${nome}\n` +
+      `⛪ *Congregação:* ${congregacao}\n` +
+      `👥 *${grupo}*\n` +
+      `📍 *Área:* ${area}\n` +
+      `🆔 *Pedido:* ${pedido}\n\n` +
+      `Sua participação na Conferência da EBD está oficialmente confirmada.\n\nSolicitamos que esta confirmação seja mantida para apresentação no credenciamento do evento.\n\nAtenciosamente,\nSecretaria da EBD`;`
+    );
+    // Envia direto para o número configurado em WHATSAPP_DESTINO
+    window.open('https://wa.me/' + WHATSAPP_DESTINO + '?text=' + texto, '_blank');
+  }
 
   // Permitir Enter nos inputs
   ['inp-nome','inp-telefone','inp-pedido'].forEach(id => {
