@@ -566,11 +566,27 @@
     try {
       const resp = await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify({ acao: 'buscarInscricao', tipoBusca, termoBusca })
       });
 
-      const dados = await resp.json();
+      if (!resp.ok) {
+        mostrarFeedback('erro', `O servidor respondeu com erro (status ${resp.status}). Verifique se o Apps Script foi publicado corretamente.`);
+        console.error('HTTP status:', resp.status, await resp.text());
+        return;
+      }
+
+      const textoResp = await resp.text();
+
+      let dados;
+      try {
+        dados = JSON.parse(textoResp);
+      } catch (parseErr) {
+        mostrarFeedback('erro', 'O servidor não devolveu dados no formato esperado. Veja o console (F12) para detalhes.');
+        console.error('Resposta recebida (não é JSON válido):', textoResp);
+        return;
+      }
+
       ocultarFeedback();
 
       if (!dados.ok || !dados.inscricao) {
@@ -581,8 +597,8 @@
       preencherComprovante(dados.inscricao);
 
     } catch (err) {
-      mostrarFeedback('erro', 'Erro de conexão. Verifique sua internet e tente novamente.');
-      console.error(err);
+      mostrarFeedback('erro', 'Não foi possível conectar ao servidor. Pode ser bloqueio de CORS ou a URL do Apps Script estar incorreta/desatualizada.');
+      console.error('Erro de fetch:', err);
     }
   }
 
