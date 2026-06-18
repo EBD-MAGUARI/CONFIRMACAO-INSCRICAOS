@@ -1,656 +1,756 @@
-Aqui está o código HTML completo, corrigido e pronto para uso. A função do WhatsApp foi totalmente ajustada para utilizar as variáveis corretas da tela e o número de destino definido na constante `WHATSAPP_DESTINO`.
-
-```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Comprovante de Inscrição — Conferência EBD</title>
+<title>Check-in — Conferência EBD</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
-    --azul: #1A3A6B;
-    --azul-claro: #2B5BA8;
-    --dourado: #C8991A;
-    --dourado-claro: #F0C040;
-    --bg: #F5F3EE;
-    --branco: #FFFFFF;
-    --texto: #1C1C1C;
-    --texto-muted: #5A5A5A;
-    --borda: #DEDAD2;
-    --verde: #1A6B3A;
-    --verde-bg: #EAF5EF;
-    --vermelho: #9B1A1A;
-    --vermelho-bg: #FAEAEA;
-  }
+:root {
+  --azul-900: #0D1F3C;
+  --azul-800: #1A3A6B;
+  --azul-600: #2B5BA8;
+  --azul-100: #D6E4F7;
+  --azul-50:  #EDF4FC;
+  --ouro-700: #8C6A0E;
+  --ouro-500: #C8991A;
+  --ouro-300: #E8C55A;
+  --ouro-100: #FAF0CC;
+  --verde-800: #0A4422;
+  --verde-700: #0F5C2E;
+  --verde-500: #1A7A42;
+  --verde-200: #A8D9BF;
+  --verde-100: #D4EFE0;
+  --verde-50:  #EDFAF3;
+  --laranja-700: #8B3A0A;
+  --laranja-500: #C85A1A;
+  --laranja-100: #FDEEE5;
+  --cinza-800: #1C1C1E;
+  --cinza-600: #3C3C3E;
+  --cinza-400: #6C6C70;
+  --cinza-200: #D1D1D6;
+  --cinza-100: #E5E5EA;
+  --cinza-50:  #F2F2F7;
+  --branco: #FFFFFF;
+  --vermelho-700: #7A1515;
+  --vermelho-500: #C0392B;
+  --vermelho-100: #FDECEA;
+}
 
-  body {
-    font-family: 'Inter', sans-serif;
-    background: var(--bg);
-    color: var(--texto);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 2rem 1rem 4rem;
-  }
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: var(--cinza-50);
+  color: var(--cinza-800);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
-  /* ── Cabeçalho ── */
-  .header {
-    text-align: center;
-    margin-bottom: 2.5rem;
-  }
-  .header-badge {
-    display: inline-block;
-    background: var(--azul);
-    color: var(--dourado-claro);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    padding: 6px 18px;
-    border-radius: 40px;
-    margin-bottom: 1rem;
-  }
-  .header h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(1.6rem, 4vw, 2.2rem);
-    color: var(--azul);
-    line-height: 1.2;
-    margin-bottom: 0.4rem;
-  }
-  .header p {
-    font-size: 14px;
-    color: var(--texto-muted);
-  }
+/* ── Top bar ── */
+.topbar {
+  background: var(--azul-900);
+  border-bottom: 2px solid var(--ouro-500);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.topbar-left { display: flex; align-items: center; gap: 10px; }
+.topbar-icon {
+  width: 32px; height: 32px;
+  background: var(--ouro-500);
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+}
+.topbar-icon svg { width: 16px; height: 16px; stroke: var(--azul-900); fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.topbar-name { font-family: 'EB Garamond', Georgia, serif; font-size: 16px; color: var(--branco); font-weight: 600; }
+.topbar-sep { color: rgba(255,255,255,0.25); }
+.topbar-sub { font-size: 13px; color: rgba(255,255,255,0.5); }
+.mode-badge {
+  background: rgba(200,153,26,0.18);
+  border: 1px solid rgba(200,153,26,0.4);
+  color: var(--ouro-300);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 100px;
+}
 
-  /* ── Card busca ── */
-  .card {
-    background: var(--branco);
-    border: 1px solid var(--borda);
-    border-radius: 16px;
-    padding: 2rem 2rem;
-    width: 100%;
-    max-width: 540px;
-    margin-bottom: 1.5rem;
-  }
+/* ── Counter bar ── */
+.counter-bar {
+  background: var(--azul-800);
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-shrink: 0;
+}
+.counter-item { display: flex; align-items: baseline; gap: 6px; }
+.counter-num { font-size: 20px; font-weight: 600; color: var(--branco); font-variant-numeric: tabular-nums; }
+.counter-label { font-size: 12px; color: rgba(255,255,255,0.5); }
+.counter-divider { width: 1px; height: 24px; background: rgba(255,255,255,0.12); }
 
-  .card-title {
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--texto-muted);
-    margin-bottom: 1.2rem;
-  }
+/* ── Main ── */
+.main {
+  flex: 1;
+  padding: 28px 16px 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
 
-  .tabs {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 1.5rem;
-    border-bottom: 1px solid var(--borda);
-    padding-bottom: 0;
-  }
-  .tab {
-    font-size: 13px;
-    font-weight: 500;
-    padding: 8px 16px;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    color: var(--texto-muted);
-    border-bottom: 2px solid transparent;
-    margin-bottom: -1px;
-    transition: color .2s, border-color .2s;
-  }
-  .tab.active {
-    color: var(--azul);
-    border-bottom-color: var(--azul);
-  }
+/* ── Search panel ── */
+.search-panel {
+  background: var(--branco);
+  border: 1px solid var(--cinza-200);
+  border-radius: 14px;
+  width: 100%;
+  max-width: 500px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.search-panel-head {
+  padding: 16px 20px 0;
+}
+.panel-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--cinza-400);
+  margin-bottom: 12px;
+}
+.tabs { display: flex; border-bottom: 1px solid var(--cinza-100); }
+.tab-btn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 500;
+  padding: 9px 16px;
+  border: none; background: transparent; cursor: pointer;
+  color: var(--cinza-400);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color .15s, border-color .15s;
+  white-space: nowrap;
+}
+.tab-btn:hover { color: var(--azul-800); }
+.tab-btn.active { color: var(--azul-800); border-bottom-color: var(--azul-800); }
 
-  .search-panel { display: none; }
-  .search-panel.active { display: block; }
+.search-panel-body { padding: 18px 20px; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
 
-  label {
-    display: block;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--texto-muted);
-    text-transform: uppercase;
-    letter-spacing: .8px;
-    margin-bottom: 6px;
-  }
+.field-label {
+  display: block;
+  font-size: 12px; font-weight: 600;
+  color: var(--cinza-600);
+  text-transform: uppercase; letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+.field-input {
+  width: 100%; height: 46px;
+  padding: 0 14px;
+  border: 1.5px solid var(--cinza-200);
+  border-radius: 9px;
+  font-size: 15px; font-family: 'DM Sans', sans-serif;
+  color: var(--cinza-800); background: var(--cinza-50);
+  outline: none;
+  transition: border-color .15s, background .15s, box-shadow .15s;
+  margin-bottom: 14px;
+}
+.field-input::placeholder { color: var(--cinza-400); }
+.field-input:focus {
+  border-color: var(--azul-600);
+  background: var(--branco);
+  box-shadow: 0 0 0 3px var(--azul-50);
+}
 
-  input[type="text"], input[type="tel"] {
-    width: 100%;
-    padding: 11px 14px;
-    border: 1px solid var(--borda);
-    border-radius: 8px;
-    font-size: 15px;
-    font-family: 'Inter', sans-serif;
-    color: var(--texto);
-    background: var(--bg);
-    outline: none;
-    transition: border-color .2s;
-    margin-bottom: 1rem;
-  }
-  input:focus { border-color: var(--azul-claro); background: #fff; }
+.btn-buscar {
+  width: 100%; height: 46px;
+  background: var(--azul-800); color: var(--branco);
+  border: none; border-radius: 9px;
+  font-size: 15px; font-weight: 600; font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: background .15s, transform .1s;
+}
+.btn-buscar:hover { background: var(--azul-600); }
+.btn-buscar:active { transform: scale(0.985); }
+.btn-buscar:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+.btn-buscar svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 
-  .btn-buscar {
-    width: 100%;
-    padding: 13px;
-    background: var(--azul);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background .2s, transform .1s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-  }
-  .btn-buscar:hover { background: var(--azul-claro); }
-  .btn-buscar:active { transform: scale(0.98); }
-  .btn-buscar svg { width: 18px; height: 18px; flex-shrink: 0; }
+/* ── Feedback inline ── */
+.msg-box {
+  display: none;
+  margin-top: 12px;
+  padding: 11px 14px;
+  border-radius: 8px;
+  font-size: 13px; font-weight: 500;
+  align-items: center; gap: 9px; line-height: 1.5;
+}
+.msg-box.show { display: flex; }
+.msg-box.loading { background: var(--azul-50); color: var(--azul-800); border: 1px solid var(--azul-100); }
+.msg-box.erro    { background: var(--vermelho-100); color: var(--vermelho-500); border: 1px solid #F5C6C3; }
+.msg-box svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+.spinner { width: 15px; height: 15px; border: 2px solid var(--azul-100); border-top-color: var(--azul-600); border-radius: 50%; animation: spin .6s linear infinite; flex-shrink: 0; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-  /* ── Feedback ── */
-  .feedback {
-    display: none;
-    padding: 12px 16px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 500;
-    margin-top: 1rem;
-    align-items: center;
-    gap: 10px;
-  }
-  .feedback.erro { background: var(--vermelho-bg); color: var(--vermelho); display: flex; }
-  .feedback.loading { background: #EEF2F9; color: var(--azul); display: flex; }
+/* ── Result card ── */
+.result-card {
+  background: var(--branco);
+  border: 1px solid var(--cinza-200);
+  border-radius: 14px;
+  width: 100%;
+  max-width: 500px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  display: none;
+}
+.result-card.visible { display: block; }
 
-  /* ── Spinner ── */
-  .spinner {
-    width: 18px; height: 18px;
-    border: 2px solid #B0C4E8;
-    border-top-color: var(--azul);
-    border-radius: 50%;
-    animation: spin .7s linear infinite;
-    flex-shrink: 0;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
+/* State variants */
+.result-card.state-encontrado  { border-color: var(--azul-100); }
+.result-card.state-confirmado  { border-color: var(--verde-200); }
+.result-card.state-ja-presente { border-color: var(--ouro-300); }
 
-  /* ── Comprovante ── */
-  #comprovante-wrapper { width: 100%; max-width: 540px; display: none; }
+.result-card-top {
+  padding: 18px 20px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  border-bottom: 1px solid var(--cinza-100);
+}
+.avatar {
+  width: 46px; height: 46px; border-radius: 50%;
+  background: var(--azul-100);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; font-weight: 600;
+  color: var(--azul-800);
+  flex-shrink: 0;
+  letter-spacing: -.5px;
+}
+.result-name { font-size: 16px; font-weight: 600; color: var(--cinza-800); margin-bottom: 3px; line-height: 1.3; }
+.result-meta { font-size: 13px; color: var(--cinza-400); }
+.result-status {
+  margin-left: auto;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 1px; text-transform: uppercase;
+  padding: 5px 11px; border-radius: 100px;
+  white-space: nowrap; flex-shrink: 0;
+}
+.status-pendente   { background: var(--azul-50);  color: var(--azul-600);  border: 1px solid var(--azul-100); }
+.status-presente   { background: var(--verde-100); color: var(--verde-700); border: 1px solid var(--verde-200); }
+.status-ja-estava  { background: var(--ouro-100);  color: var(--ouro-700);  border: 1px solid var(--ouro-300); }
 
-  .comprovante {
-    background: var(--branco);
-    border: 1px solid var(--borda);
-    border-radius: 16px;
-    overflow: hidden;
-    margin-bottom: 1rem;
-  }
+.result-data {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--cinza-100);
+  border-bottom: 1px solid var(--cinza-100);
+}
+.data-cell {
+  background: var(--branco);
+  padding: 10px 14px;
+}
+.data-cell.full { grid-column: 1 / -1; }
+.data-cell-label { font-size: 11px; color: var(--cinza-400); font-weight: 600; text-transform: uppercase; letter-spacing: .7px; margin-bottom: 2px; }
+.data-cell-value { font-size: 13px; color: var(--cinza-800); font-weight: 500; }
 
-  .comp-header {
-    background: var(--azul);
-    padding: 1.6rem 2rem;
-    text-align: center;
-    position: relative;
-  }
-  .comp-header::after {
-    content: '';
-    display: block;
-    height: 3px;
-    background: linear-gradient(90deg, var(--dourado), var(--dourado-claro), var(--dourado));
-    margin-top: 1rem;
-  }
-  .comp-logo {
-    font-family: 'Playfair Display', serif;
-    font-size: 13px;
-    color: var(--dourado-claro);
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-  .comp-titulo {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.4rem;
-    color: #fff;
-    line-height: 1.3;
-  }
-  .comp-subtitulo {
-    font-size: 12px;
-    color: rgba(255,255,255,0.65);
-    margin-top: 4px;
-  }
+.result-actions { padding: 16px 20px; display: flex; gap: 8px; flex-wrap: wrap; }
 
-  .comp-status {
-    background: var(--verde-bg);
-    border-bottom: 1px solid #C3E0CC;
-    padding: 14px 2rem;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .status-icon {
-    width: 32px; height: 32px;
-    background: var(--verde);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .status-icon svg { width: 16px; height: 16px; stroke: #fff; }
-  .status-text { font-size: 13px; color: var(--verde); font-weight: 600; }
-  .status-sub { font-size: 12px; color: #2E7D52; }
+/* ── CTA de confirmação ── */
+.btn-confirmar {
+  flex: 1;
+  min-width: 0;
+  height: 50px;
+  background: var(--verde-500); color: var(--branco);
+  border: none; border-radius: 10px;
+  font-size: 15px; font-weight: 600; font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: background .15s, transform .1s;
+  letter-spacing: .1px;
+}
+.btn-confirmar:hover { background: var(--verde-700); }
+.btn-confirmar:active { transform: scale(0.98); }
+.btn-confirmar:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+.btn-confirmar svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 
-  .comp-body { padding: 1.5rem 2rem; }
+/* Confirmado state */
+.btn-confirmar.done {
+  background: var(--verde-700);
+  pointer-events: none;
+}
 
-  .comp-body p.intro {
-    font-size: 13px;
-    color: var(--texto-muted);
-    margin-bottom: 1.2rem;
-    line-height: 1.6;
-    border-left: 3px solid var(--dourado);
-    padding-left: 12px;
-  }
+/* Já estava presente */
+.result-already {
+  background: var(--ouro-100);
+  border: 1px solid var(--ouro-300);
+  border-left: 3px solid var(--ouro-500);
+  border-radius: 8px;
+  padding: 11px 14px;
+  font-size: 13px;
+  color: var(--ouro-700);
+  line-height: 1.6;
+  width: 100%;
+}
+.result-already strong { font-weight: 600; }
 
-  .dados-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    border: 1px solid var(--borda);
-    border-radius: 10px;
-    overflow: hidden;
-    margin-bottom: 1.5rem;
-  }
-  .dado-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--borda);
-  }
-  .dado-row:last-child { border-bottom: none; }
-  .dado-row:nth-child(even) { background: #FAFAF8; }
-  .dado-icon { font-size: 18px; flex-shrink: 0; width: 24px; text-align: center; }
-  .dado-label { font-size: 11px; color: var(--texto-muted); font-weight: 600; text-transform: uppercase; letter-spacing: .6px; }
-  .dado-valor { font-size: 14px; color: var(--texto); font-weight: 500; }
+.btn-nova-busca {
+  height: 50px; padding: 0 18px;
+  background: var(--branco);
+  border: 1.5px solid var(--cinza-200);
+  border-radius: 10px;
+  font-size: 14px; font-weight: 600; font-family: 'DM Sans', sans-serif;
+  color: var(--cinza-600); cursor: pointer;
+  display: flex; align-items: center; gap: 6px;
+  transition: background .15s, border-color .15s;
+  white-space: nowrap;
+}
+.btn-nova-busca:hover { background: var(--cinza-50); border-color: var(--cinza-400); }
+.btn-nova-busca svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 
-  .comp-id {
-    background: #F0F4FB;
-    border: 1px dashed #B0C4E8;
-    border-radius: 8px;
-    padding: 12px 16px;
-    text-align: center;
-    margin-bottom: 1.5rem;
-  }
-  .comp-id small { font-size: 11px; color: var(--azul-claro); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
-  .comp-id strong { display: block; font-size: 15px; color: var(--azul); font-family: monospace; margin-top: 2px; letter-spacing: 1px; }
+/* ── Success overlay ── */
+.success-toast {
+  position: fixed;
+  bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--verde-800);
+  color: var(--branco);
+  padding: 14px 22px;
+  border-radius: 12px;
+  display: flex; align-items: center; gap: 10px;
+  font-size: 14px; font-weight: 600;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+  transition: transform .3s cubic-bezier(.34,1.56,.64,1), opacity .3s;
+  opacity: 0;
+  z-index: 999;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.success-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+.success-toast svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
 
-  .comp-footer-text {
-    font-size: 12px;
-    color: var(--texto-muted);
-    text-align: center;
-    line-height: 1.7;
-    border-top: 1px solid var(--borda);
-    padding-top: 1.2rem;
-  }
-  .comp-footer-text strong { color: var(--azul); }
+/* ── Recent list ── */
+.recent-section {
+  width: 100%;
+  max-width: 500px;
+}
+.recent-header {
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--cinza-400);
+  padding: 0 4px;
+  margin-bottom: 8px;
+}
+.recent-list {
+  display: flex; flex-direction: column; gap: 4px;
+}
+.recent-item {
+  background: var(--branco);
+  border: 1px solid var(--cinza-100);
+  border-radius: 10px;
+  padding: 10px 14px;
+  display: flex; align-items: center; gap: 10px;
+  animation: fadeUp .25s ease forwards;
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+.recent-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--verde-500);
+  flex-shrink: 0;
+}
+.recent-name { font-size: 13px; font-weight: 500; color: var(--cinza-800); flex: 1; }
+.recent-time { font-size: 12px; color: var(--cinza-400); white-space: nowrap; }
 
-  .comp-rodape {
-    background: var(--azul);
-    padding: 12px 2rem;
-    text-align: center;
-    font-size: 11px;
-    color: rgba(255,255,255,0.55);
-    letter-spacing: .5px;
-  }
-
-  /* ── Ações ── */
-  .acoes {
-    display: flex;
-    gap: 10px;
-  }
-  .btn-acao {
-    flex: 1;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid var(--borda);
-    background: var(--branco);
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-    transition: background .15s, transform .1s;
-    color: var(--texto);
-  }
-  .btn-acao:hover { background: var(--bg); }
-  .btn-acao:active { transform: scale(0.97); }
-  .btn-acao.primario { background: var(--azul); color: #fff; border-color: var(--azul); }
-  .btn-acao.primario:hover { background: var(--azul-claro); }
-  .btn-acao.whatsapp { background: #1FAA59; color: #fff; border-color: #1FAA59; }
-  .btn-acao.whatsapp:hover { background: #18954c; }
-  .btn-acao svg { width: 16px; height: 16px; flex-shrink: 0; }
-
-  /* ── Nova busca ── */
-  .btn-nova {
-    display: block;
-    text-align: center;
-    font-size: 13px;
-    color: var(--azul-claro);
-    cursor: pointer;
-    margin-top: .5rem;
-    text-decoration: underline;
-    background: none;
-    border: none;
-    width: 100%;
-  }
-
-  /* ── Print ── */
-  @media print {
-    body { background: #fff; padding: 0; }
-    .card, .acoes, .btn-nova, .header { display: none !important; }
-    #comprovante-wrapper { display: block !important; max-width: 100%; }
-    .comprovante { border: none; border-radius: 0; }
-    .comp-rodape { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .comp-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  }
-
-  @media (max-width: 480px) {
-    .card, #comprovante-wrapper { padding: 0; }
-    .card { padding: 1.5rem 1.2rem; }
-    .comp-body { padding: 1.2rem 1.2rem; }
-    .comp-header { padding: 1.2rem; }
-    .acoes { flex-direction: column; }
-  }
+/* Responsive */
+@media (max-width: 480px) {
+  .counter-bar { gap: 14px; }
+  .counter-num { font-size: 18px; }
+  .result-data { grid-template-columns: 1fr; }
+  .data-cell.full { grid-column: 1; }
+  .topbar-sub { display: none; }
+}
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="header-badge">EBD AD Maguari</div>
-  <h1>Conferência da EBD</h1>
-  <p>Consulta e emissão de comprovante de inscrição</p>
+<!-- Top bar -->
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-icon">
+      <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    </div>
+    <span class="topbar-name">EBD · AD Maguari</span>
+    <span class="topbar-sep">·</span>
+    <span class="topbar-sub">Conferência 2025</span>
+  </div>
+  <div class="mode-badge">Check-in</div>
+</header>
+
+<!-- Counter bar -->
+<div class="counter-bar">
+  <div class="counter-item">
+    <span class="counter-num" id="cnt-presentes">0</span>
+    <span class="counter-label">presentes</span>
+  </div>
+  <div class="counter-divider"></div>
+  <div class="counter-item">
+    <span class="counter-num" id="cnt-inscritos">—</span>
+    <span class="counter-label">inscritos</span>
+  </div>
+  <div class="counter-divider"></div>
+  <div class="counter-item">
+    <span class="counter-num" id="cnt-pct">—</span>
+    <span class="counter-label">% presença</span>
+  </div>
 </div>
 
-<div class="card" id="card-busca">
-  <div class="card-title">Buscar inscrição</div>
+<!-- Main -->
+<main class="main">
 
-  <div class="tabs">
-    <button class="tab active" onclick="trocarTab('nome')">Por nome</button>
-    <button class="tab" onclick="trocarTab('telefone')">Por telefone</button>
-    <button class="tab" onclick="trocarTab('pedido')">Por nº do pedido</button>
-  </div>
-
-  <div id="panel-nome" class="search-panel active">
-    <label for="inp-nome">Nome completo</label>
-    <input type="text" id="inp-nome" placeholder="Ex: Judite Ferreira Moura" autocomplete="off">
-  </div>
-
-  <div id="panel-telefone" class="search-panel">
-    <label for="inp-telefone">Telefone</label>
-    <input type="tel" id="inp-telefone" placeholder="Ex: (91) 99234-6353" autocomplete="off">
-  </div>
-
-  <div id="panel-pedido" class="search-panel">
-    <label for="inp-pedido">Número do pedido</label>
-    <input type="text" id="inp-pedido" placeholder="Ex: EBD-1781732110398" autocomplete="off">
-  </div>
-
-  <button class="btn-buscar" onclick="buscarInscricao()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-    </svg>
-    Buscar inscrição
-  </button>
-
-  <div class="feedback" id="feedback"></div>
-</div>
-
-<div id="comprovante-wrapper">
-  <div class="comprovante" id="comprovante">
-    <div class="comp-header">
-      <div class="comp-logo">EBD · AD Maguari</div>
-      <div class="comp-titulo">📚 Conferência da EBD</div>
-      <div class="comp-subtitulo">Documento Oficial de Inscrição</div>
-    </div>
-
-    <div class="comp-status">
-      <div class="status-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="20 6 9 17 4 12"/>
-        </svg>
-      </div>
-      <div>
-        <div class="status-text">Inscrição confirmada</div>
-        <div class="status-sub">Pagamento registrado com sucesso</div>
+  <!-- Search -->
+  <div class="search-panel" id="search-panel">
+    <div class="search-panel-head">
+      <div class="panel-label">Buscar participante</div>
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('nome', this)">Nome</button>
+        <button class="tab-btn" onclick="switchTab('telefone', this)">Telefone</button>
+        <button class="tab-btn" onclick="switchTab('pedido', this)">Nº pedido</button>
       </div>
     </div>
-
-    <div class="comp-body">
-      <p class="intro">
-        Informamos que o pagamento referente à sua inscrição foi confirmado com sucesso.
-        Os dados abaixo foram registrados em nosso sistema.
-      </p>
-
-      <div class="dados-grid">
-        <div class="dado-row">
-          <span class="dado-icon">👤</span>
-          <div>
-            <div class="dado-label">Participante</div>
-            <div class="dado-valor" id="d-nome">—</div>
-          </div>
-        </div>
-        <div class="dado-row">
-          <span class="dado-icon">📞</span>
-          <div>
-            <div class="dado-label">Telefone</div>
-            <div class="dado-valor" id="d-telefone">—</div>
-          </div>
-        </div>
-        <div class="dado-row">
-          <span class="dado-icon">⛪</span>
-          <div>
-            <div class="dado-label">Congregação</div>
-            <div class="dado-valor" id="d-congregacao">—</div>
-          </div>
-        </div>
-        <div class="dado-row">
-          <span class="dado-icon">👥</span>
-          <div>
-            <div class="dado-label">Grupo</div>
-            <div class="dado-valor" id="d-grupo">—</div>
-          </div>
-        </div>
-        <div class="dado-row">
-          <span class="dado-icon">📍</span>
-          <div>
-            <div class="dado-label">Área</div>
-            <div class="dado-valor" id="d-area">—</div>
-          </div>
-        </div>
-        <div class="dado-row">
-          <span class="dado-icon">📅</span>
-          <div>
-            <div class="dado-label">Data de inscrição</div>
-            <div class="dado-valor" id="d-data">—</div>
-          </div>
-        </div>
+    <div class="search-panel-body">
+      <div id="tab-nome" class="tab-panel active">
+        <label class="field-label" for="inp-nome">Nome completo</label>
+        <input class="field-input" type="text" id="inp-nome" placeholder="Ex: Judite Ferreira Moura" autocomplete="off">
+      </div>
+      <div id="tab-telefone" class="tab-panel">
+        <label class="field-label" for="inp-telefone">Telefone com DDD</label>
+        <input class="field-input" type="tel" id="inp-telefone" placeholder="Ex: (91) 99234-6353" autocomplete="off">
+      </div>
+      <div id="tab-pedido" class="tab-panel">
+        <label class="field-label" for="inp-pedido">Número do pedido</label>
+        <input class="field-input" type="text" id="inp-pedido" placeholder="Ex: EBD-1781732110398" autocomplete="off">
       </div>
 
-      <div class="comp-id">
-        <small>Número do pedido</small>
-        <strong id="d-pedido">—</strong>
-      </div>
+      <button class="btn-buscar" id="btn-buscar" onclick="buscar()">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Buscar participante
+      </button>
 
-      <div class="comp-footer-text">
-        Sua participação na Conferência da EBD está <strong>oficialmente confirmada</strong>.<br>
-        Apresente este comprovante no credenciamento do evento.<br><br>
-        <strong>Atenciosamente, Secretaria da EBD</strong>
-      </div>
-    </div>
-
-    <div class="comp-rodape">
-      EBD AD Maguari · Emitido em <span id="d-emissao">—</span>
+      <div class="msg-box" id="msg-box"></div>
     </div>
   </div>
 
-  <div class="acoes">
-    <button class="btn-acao" onclick="window.print()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>
-      </svg>
-      Imprimir
-    </button>
-    <button class="btn-acao whatsapp" onclick="compartilharWhatsApp()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.64 3.27 2 2 0 0 1 3.62 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6 6l.94-.94a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16z"/>
-      </svg>
-      Enviar para o WhatsApp
-    </button>
+  <!-- Result card -->
+  <div class="result-card" id="result-card">
+    <div class="result-card-top">
+      <div class="avatar" id="r-avatar">??</div>
+      <div style="flex:1; min-width:0;">
+        <div class="result-name" id="r-nome">—</div>
+        <div class="result-meta" id="r-meta">—</div>
+      </div>
+      <div class="result-status status-pendente" id="r-status-pill">Aguardando</div>
+    </div>
+
+    <div class="result-data">
+      <div class="data-cell">
+        <div class="data-cell-label">Congregação</div>
+        <div class="data-cell-value" id="r-congregacao">—</div>
+      </div>
+      <div class="data-cell">
+        <div class="data-cell-label">Área</div>
+        <div class="data-cell-value" id="r-area">—</div>
+      </div>
+      <div class="data-cell">
+        <div class="data-cell-label">Grupo</div>
+        <div class="data-cell-value" id="r-grupo">—</div>
+      </div>
+      <div class="data-cell">
+        <div class="data-cell-label">Nº do pedido</div>
+        <div class="data-cell-value" id="r-pedido">—</div>
+      </div>
+    </div>
+
+    <div class="result-actions" id="result-actions"></div>
   </div>
-  <button class="btn-nova" onclick="novaBusca()">← Fazer nova busca</button>
+
+  <!-- Recentes -->
+  <div class="recent-section" id="recent-section" style="display:none;">
+    <div class="recent-header">Confirmados agora</div>
+    <div class="recent-list" id="recent-list"></div>
+  </div>
+
+</main>
+
+<!-- Toast -->
+<div class="success-toast" id="toast">
+  <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toast-text">Presença confirmada!</span>
 </div>
 
 <script>
-  // ── Configuração ──────────────────────────────────────────────────────────
-  // Cole aqui a URL do seu Google Apps Script publicado como Web App
-  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzYWgUNxvaGvhJJn7_FHdbWeleE5qcyMjY9QxIkcBgTSZ7-Zon6ot1PSJK9sO2SY1Cdiw/exec";
-
-  // Número de WhatsApp que receberá o comprovante (com DDI 55 + DDD + número)
-  const WHATSAPP_DESTINO = "5591980208294";
+  // ── Config ────────────────────────────────────────────────────────────────
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwuHiBRbzAJ3JeGn_gMMyLiwMQUPtr8eq_A_1DMFDOxzhsGLt4pLmwAQf9CnhoXAOHtWg/exec";
 
   let tabAtual = "nome";
+  let inscricaoAtual = null;
+  let cntPresentes = 0;
+  let cntInscritos = null;
 
-  function trocarTab(tab) {
+  // ── Tabs ──────────────────────────────────────────────────────────────────
+  function switchTab(tab, btn) {
     tabAtual = tab;
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.search-panel').forEach(p => p.classList.remove('active'));
-    event.target.classList.add('active');
-    document.getElementById('panel-' + tab).classList.add('active');
-    ocultarFeedback();
+    document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + tab).classList.add('active');
+    clearMsg();
+    setTimeout(() => document.getElementById('inp-' + tab)?.focus(), 60);
   }
 
-  function mostrarFeedback(tipo, msg) {
-    const el = document.getElementById('feedback');
-    el.className = 'feedback ' + tipo;
-    el.innerHTML = tipo === 'loading'
-      ? `<div class="spinner"></div><span>${msg}</span>`
-      : `<span>⚠️ ${msg}</span>`;
-  }
-  function ocultarFeedback() {
-    document.getElementById('feedback').className = 'feedback';
-  }
-
-  async function buscarInscricao() {
-    ocultarFeedback();
-
-    let termoBusca = '';
-    let tipoBusca = tabAtual;
-
-    if (tabAtual === 'nome') termoBusca = document.getElementById('inp-nome').value.trim();
-    else if (tabAtual === 'telefone') termoBusca = document.getElementById('inp-telefone').value.trim();
-    else termoBusca = document.getElementById('inp-pedido').value.trim();
-
-    if (!termoBusca) {
-      mostrarFeedback('erro', 'Preencha o campo antes de buscar.');
-      return;
+  // ── Mensagens ─────────────────────────────────────────────────────────────
+  function showMsg(tipo, texto) {
+    const el = document.getElementById('msg-box');
+    el.className = 'msg-box show ' + tipo;
+    if (tipo === 'loading') {
+      el.innerHTML = `<div class="spinner"></div><span>${texto}</span>`;
+    } else {
+      el.innerHTML = `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>${texto}</span>`;
     }
+  }
+  function clearMsg() {
+    const el = document.getElementById('msg-box');
+    el.className = 'msg-box'; el.innerHTML = '';
+  }
 
-    mostrarFeedback('loading', 'Consultando base de dados...');
+  // ── Busca ─────────────────────────────────────────────────────────────────
+  async function buscar() {
+    clearMsg();
+    const map  = { nome: 'inp-nome', telefone: 'inp-telefone', pedido: 'inp-pedido' };
+    const term = document.getElementById(map[tabAtual]).value.trim();
+    if (!term) { showMsg('erro', 'Preencha o campo antes de buscar.'); return; }
+
+    const btn = document.getElementById('btn-buscar');
+    btn.disabled = true;
+    showMsg('loading', 'Buscando participante…');
+    ocultarResultado();
 
     try {
       const resp = await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ acao: 'buscarInscricao', tipoBusca, termoBusca })
+        body: JSON.stringify({ acao: 'buscarInscricao', tipoBusca: tabAtual, termoBusca: term })
       });
-
-      if (!resp.ok) {
-        mostrarFeedback('erro', `O servidor respondeu com erro (status ${resp.status}). Verifique se o Apps Script foi publicado corretamente.`);
-        console.error('HTTP status:', resp.status, await resp.text());
-        return;
-      }
-
-      const textoResp = await resp.text();
-
+      if (!resp.ok) { showMsg('erro', `Erro do servidor (HTTP ${resp.status}).`); return; }
       let dados;
-      try {
-        dados = JSON.parse(textoResp);
-      } catch (parseErr) {
-        mostrarFeedback('erro', 'O servidor não devolveu dados no formato esperado. Veja o console (F12) para detalhes.');
-        console.error('Resposta recebida (não é JSON válido):', textoResp);
-        return;
-      }
-
-      ocultarFeedback();
+      try { dados = JSON.parse(await resp.text()); }
+      catch { showMsg('erro', 'Resposta inesperada do servidor.'); return; }
 
       if (!dados.ok || !dados.inscricao) {
-        mostrarFeedback('erro', dados.mensagem || 'Inscrição não encontrada. Verifique os dados e tente novamente.');
+        showMsg('erro', dados.mensagem || 'Participante não encontrado. Verifique os dados.');
         return;
       }
 
-      preencherComprovante(dados.inscricao);
+      clearMsg();
+      inscricaoAtual = dados.inscricao;
+      // Se vier totais da planilha, atualiza
+      if (dados.totalInscritos) atualizarContador(null, dados.totalInscritos);
+      renderResultado(dados.inscricao);
 
     } catch (err) {
-      mostrarFeedback('erro', 'Não foi possível conectar ao servidor. Pode ser bloqueio de CORS ou a URL do Apps Script estar incorreta/desatualizada.');
-      console.error('Erro de fetch:', err);
+      showMsg('erro', 'Não foi possível conectar. Verifique sua conexão.');
+      console.error(err);
+    } finally {
+      btn.disabled = false;
     }
   }
 
-  function preencherComprovante(ins) {
-    document.getElementById('d-nome').textContent = ins.nome || '—';
-    document.getElementById('d-telefone').textContent = ins.telefone || '—';
-    document.getElementById('d-congregacao').textContent = ins.congregacao || '—';
-    document.getElementById('d-grupo').textContent = ins.grupo ? 'Grupo ' + ins.grupo : '—';
-    document.getElementById('d-area').textContent = ins.area || '—';
-    document.getElementById('d-data').textContent = ins.data || '—';
-    document.getElementById('d-pedido').textContent = ins.orderId || '—';
+  // ── Render resultado ───────────────────────────────────────────────────────
+  function renderResultado(ins) {
+    const jaPresente = !!ins.presente; // campo booleano vindo da planilha
 
-    const agora = new Date();
-    document.getElementById('d-emissao').textContent =
-      agora.toLocaleDateString('pt-BR') + ' às ' + agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    // Avatar com iniciais
+    const partes = (ins.nome || '').trim().split(' ');
+    const iniciais = partes.length >= 2
+      ? partes[0][0] + partes[partes.length - 1][0]
+      : (ins.nome || '??').substring(0, 2);
+    document.getElementById('r-avatar').textContent = iniciais.toUpperCase();
 
-    document.getElementById('card-busca').style.display = 'none';
-    document.getElementById('comprovante-wrapper').style.display = 'block';
+    document.getElementById('r-nome').textContent        = ins.nome || '—';
+    document.getElementById('r-meta').textContent        = ins.telefone || '—';
+    document.getElementById('r-congregacao').textContent = ins.congregacao || '—';
+    document.getElementById('r-area').textContent        = ins.area || '—';
+    document.getElementById('r-grupo').textContent       = ins.grupo ? 'Grupo ' + ins.grupo : '—';
+    document.getElementById('r-pedido').textContent      = ins.orderId || '—';
+
+    // Status pill
+    const pill = document.getElementById('r-status-pill');
+    if (jaPresente) {
+      pill.textContent = '✓ Presente';
+      pill.className = 'result-status status-presente';
+    } else {
+      pill.textContent = 'Aguardando';
+      pill.className = 'result-status status-pendente';
+    }
+
+    // Actions
+    const actions = document.getElementById('result-actions');
+    if (jaPresente) {
+      actions.innerHTML = `
+        <div class="result-already">
+          <strong>Presença já confirmada anteriormente.</strong> Este participante foi registrado como presente. Não é necessária nenhuma ação.
+        </div>
+        <button class="btn-nova-busca" style="margin-top:8px; width:100%; justify-content:center;" onclick="novaBusca()">
+          <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+          Buscar outro participante
+        </button>`;
+    } else {
+      actions.innerHTML = `
+        <button class="btn-confirmar" id="btn-confirmar" onclick="confirmarPresenca()">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          Confirmar presença
+        </button>
+        <button class="btn-nova-busca" onclick="novaBusca()">
+          <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+          Voltar
+        </button>`;
+    }
+
+    const card = document.getElementById('result-card');
+    card.className = 'result-card visible ' + (jaPresente ? 'state-ja-presente' : 'state-encontrado');
   }
 
+  function ocultarResultado() {
+    document.getElementById('result-card').className = 'result-card';
+    document.getElementById('result-actions').innerHTML = '';
+  }
+
+  // ── Confirmar presença ────────────────────────────────────────────────────
+  async function confirmarPresenca() {
+    if (!inscricaoAtual) return;
+
+    const btn = document.getElementById('btn-confirmar');
+    btn.disabled = true;
+    btn.innerHTML = `<div class="spinner" style="border-color:rgba(255,255,255,.3);border-top-color:#fff;"></div> Confirmando…`;
+
+    try {
+      const resp = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ acao: 'confirmarPresenca', orderId: inscricaoAtual.orderId })
+      });
+
+      let dados;
+      try { dados = JSON.parse(await resp.text()); }
+      catch { dados = { ok: false }; }
+
+      if (dados.ok !== false) {
+        // Sucesso — atualiza UI
+        inscricaoAtual.presente = true;
+        atualizarContador(cntPresentes + 1, cntInscritos);
+        adicionarRecente(inscricaoAtual.nome);
+        mostrarToast(`✓ ${inscricaoAtual.nome?.split(' ')[0]} confirmado(a)!`);
+
+        // Atualiza card para estado "já presente"
+        const pill = document.getElementById('r-status-pill');
+        pill.textContent = '✓ Presente';
+        pill.className = 'result-status status-presente';
+        document.getElementById('result-card').className = 'result-card visible state-confirmado';
+
+        btn.className = 'btn-confirmar done';
+        btn.innerHTML = `<svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><polyline points="20 6 9 17 4 12"/></svg> Presença confirmada`;
+
+        document.getElementById('result-actions').innerHTML = `
+          <div class="btn-confirmar done" style="flex:1; height:50px; display:flex; align-items:center; justify-content:center; gap:8px; font-size:15px; font-weight:600; border-radius:10px; background:var(--verde-700); color:#fff;">
+            <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><polyline points="20 6 9 17 4 12"/></svg>
+            Presença confirmada
+          </div>
+          <button class="btn-nova-busca" onclick="novaBusca()">
+            <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round"><polyline points="15 18 9 12 15 6"/></svg>
+            Próximo
+          </button>`;
+
+      } else {
+        btn.disabled = false;
+        btn.innerHTML = `<svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><polyline points="20 6 9 17 4 12"/></svg> Confirmar presença`;
+        showMsg('erro', dados.mensagem || 'Não foi possível confirmar. Tente novamente.');
+      }
+
+    } catch (err) {
+      btn.disabled = false;
+      btn.innerHTML = `<svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><polyline points="20 6 9 17 4 12"/></svg> Confirmar presença`;
+      showMsg('erro', 'Erro de conexão. Tente novamente.');
+      console.error(err);
+    }
+  }
+
+  // ── Nova busca ────────────────────────────────────────────────────────────
   function novaBusca() {
-    document.getElementById('card-busca').style.display = 'block';
-    document.getElementById('comprovante-wrapper').style.display = 'none';
-    document.getElementById('inp-nome').value = '';
-    document.getElementById('inp-telefone').value = '';
-    document.getElementById('inp-pedido').value = '';
-    ocultarFeedback();
+    inscricaoAtual = null;
+    ocultarResultado();
+    clearMsg();
+    ['inp-nome','inp-telefone','inp-pedido'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    setTimeout(() => document.getElementById('inp-' + tabAtual)?.focus(), 60);
   }
 
-  function compartilharWhatsApp() {
-    const nome = document.getElementById('d-nome').textContent;
-    const telefone = document.getElementById('d-telefone').textContent;
-    const congregacao = document.getElementById('d-congregacao').textContent;
-    const grupo = document.getElementById('d-grupo').textContent;
-    const area = document.getElementById('d-area').textContent;
-    const pedido = document.getElementById('d-pedido').textContent;
-
-    const texto = `📚 *CONFERÊNCIA DA EBD*\n*CONFIRMAÇÃO DE INSCRIÇÃO*\n\nInformamos que o pagamento referente à sua inscrição foi confirmado com sucesso.\n\n*Dados registrados:*\n👤 *Participante:* ${nome}\n📞 *Telefone:* ${telefone}\n⛪ *Congregação:* ${congregacao}\n👥 *Grupo:* ${grupo}\n📍 *Área:* ${area}\n🆔 *Número do Pedido:* ${pedido}\n\nSua participação na Conferência da EBD está oficialmente confirmada.\n\nApresente esta confirmação no credenciamento do evento.\n\n*Atenciosamente,*\n*Secretaria da EBD*`;
-
-    const urlZap = `https://api.whatsapp.com/send?phone=${WHATSAPP_DESTINO}&text=${encodeURIComponent(texto)}`;
-    window.open(urlZap, '_blank');
+  // ── Contador ──────────────────────────────────────────────────────────────
+  function atualizarContador(presentes, inscritos) {
+    if (presentes !== null) cntPresentes = presentes;
+    if (inscritos  !== null) cntInscritos  = inscritos;
+    document.getElementById('cnt-presentes').textContent = cntPresentes;
+    document.getElementById('cnt-inscritos').textContent = cntInscritos !== null ? cntInscritos : '—';
+    if (cntInscritos) {
+      const pct = Math.round((cntPresentes / cntInscritos) * 100);
+      document.getElementById('cnt-pct').textContent = pct + '%';
+    }
   }
 
-  // Permitir Enter nos inputs
+  // ── Toast ─────────────────────────────────────────────────────────────────
+  function mostrarToast(texto) {
+    const t = document.getElementById('toast');
+    document.getElementById('toast-text').textContent = texto;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  // ── Recentes ──────────────────────────────────────────────────────────────
+  function adicionarRecente(nome) {
+    const section = document.getElementById('recent-section');
+    const list    = document.getElementById('recent-list');
+    section.style.display = 'block';
+
+    const agora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    const item  = document.createElement('div');
+    item.className = 'recent-item';
+    item.innerHTML = `
+      <div class="recent-dot"></div>
+      <span class="recent-name">${nome || '—'}</span>
+      <span class="recent-time">${agora}</span>`;
+
+    list.insertBefore(item, list.firstChild);
+
+    // Manter no máximo 8 recentes
+    while (list.children.length > 8) list.removeChild(list.lastChild);
+  }
+
+  // ── Enter para buscar ─────────────────────────────────────────────────────
   ['inp-nome','inp-telefone','inp-pedido'].forEach(id => {
-    document.getElementById(id).addEventListener('keydown', e => {
-      if (e.key === 'Enter') buscarInscricao();
+    document.getElementById(id)?.addEventListener('keydown', e => {
+      if (e.key === 'Enter') buscar();
     });
   });
 </script>
 </body>
 </html>
-
-```
