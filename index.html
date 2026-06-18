@@ -330,6 +330,8 @@
   .btn-acao:active { transform: scale(0.97); }
   .btn-acao.primario { background: var(--azul); color: #fff; border-color: var(--azul); }
   .btn-acao.primario:hover { background: var(--azul-claro); }
+  .btn-acao.whatsapp { background: #1FAA59; color: #fff; border-color: #1FAA59; }
+  .btn-acao.whatsapp:hover { background: #18954c; }
   .btn-acao svg { width: 16px; height: 16px; flex-shrink: 0; }
 
   /* ── Nova busca ── */
@@ -504,11 +506,11 @@
       </svg>
       Imprimir
     </button>
-    <button class="btn-acao primario" onclick="compartilharWhatsApp()">
+    <button class="btn-acao whatsapp" onclick="compartilharWhatsApp()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.64 3.27 2 2 0 0 1 3.62 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6 6l.94-.94a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16z"/>
       </svg>
-      Enviar WhatsApp
+      Enviar para o WhatsApp
     </button>
   </div>
   <button class="btn-nova" onclick="novaBusca()">← Fazer nova busca</button>
@@ -518,6 +520,9 @@
   // ── Configuração ──────────────────────────────────────────────────────────
   // Cole aqui a URL do seu Google Apps Script publicado como Web App
   const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyFRrZ9OWl5xkrKh6pLMK8-TpBcIKWqahcGD3_4rA0qbEYrs4zb4wvHsQZO_jW_duLwgA/exec";
+
+  // Número de WhatsApp que receberá o comprovante (com DDI 55 + DDD + número)
+  const WHATSAPP_DESTINO = "5591980208294";
 
   let tabAtual = "nome";
 
@@ -624,7 +629,8 @@
       `🆔 *Pedido:* ${pedido}\n\n` +
       `_Secretaria da EBD AD Maguari_`
     );
-    window.open('https://wa.me/?text=' + texto, '_blank');
+    // Envia direto para o número configurado em WHATSAPP_DESTINO
+    window.open('https://wa.me/' + WHATSAPP_DESTINO + '?text=' + texto, '_blank');
   }
 
   // Permitir Enter nos inputs
